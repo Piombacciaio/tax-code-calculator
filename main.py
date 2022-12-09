@@ -1,5 +1,8 @@
 import ctypes, datetime as dt, json, os, PySimpleGUI as PSG, sys
+from urllib import request
 from PIL import Image, ImageDraw, ImageFont
+
+
 
 #
 # Controllo formato directory ed impostazione costanti
@@ -10,8 +13,22 @@ if sys.argv[0].endswith(".py"):
 if not os.path.exists("output"):
   os.mkdir("output")
 if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/comuni.json") or not os.path.exists("assets/VerdanaBold.ttf"):
-  PSG.popup_ok("Assets mancanti o nome file invalidi", "Controllare la directory assets o recarsi a https://github.com/Piombacciaio/calcolo-codice-fiscale per recuperare i file originali.", title="Errore", button_color="red")
-  quit(1)
+  
+  try:
+  
+    github = 'https://raw.githubusercontent.com/Piombacciaio/calcolo-codice-fiscale/main/assets/'
+    files = ["base.jpg","comuni.json", "VerdanaBold.ttf"]
+    percorso = "assets"
+    os.mkdir(percorso)
+    for file in files:
+      with request.urlopen(github + file) as response:
+        with open(os.path.join(percorso, file), 'wb') as f:
+          f.write(response.read())
+  
+  except:
+
+    PSG.popup_ok("Assets mancanti o nome file invalidi", "Controllare la directory assets o recarsi a https://github.com/Piombacciaio/calcolo-codice-fiscale per recuperare i file originali.", title="Errore", button_color="red")
+    quit(1)
 
 MESE_NASCITA = {
   "GENNAIO": "A",
@@ -160,6 +177,7 @@ with open("assets/comuni.json", "r") as codici:
   CODICI = json.load(codici)
 
 
+
 #
 # Impostazione PySimpleGUI
 #
@@ -191,6 +209,8 @@ vista_base = [
 #
 # Code
 #
+
+
 def calcola_caratteri_nome(nome:str):
   if len(nome) <= 3:
     codice = ""
