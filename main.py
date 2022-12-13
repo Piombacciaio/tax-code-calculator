@@ -4,59 +4,56 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 
-#
-# Controllo formato directory ed impostazione costanti
-#
 if sys.argv[0].endswith(".py"):
   ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 6)
   sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=0, cols=0))
 if not os.path.exists("output"):
   os.mkdir("output")
-if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/comuni.json") or not os.path.exists("assets/VerdanaBold.ttf"):
+if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/municipalities.json") or not os.path.exists("assets/VerdanaBold.ttf"):
   
   try:
   
-    github = 'https://raw.githubusercontent.com/Piombacciaio/calcolo-codice-fiscale/main/assets/'
-    files = ["base.jpg","comuni.json", "VerdanaBold.ttf"]
-    percorso = "assets"
-    os.mkdir(percorso)
+    github = 'https://raw.githubusercontent.com/Piombacciaio/calcolo-code-fiscale/main/assets/'
+    files = ["base.jpg","municipalities.json", "VerdanaBold.ttf"]
+    path = "assets"
+    os.mkdir(path)
     for file in files:
       with request.urlopen(github + file) as response:
-        with open(os.path.join(percorso, file), 'wb') as f:
+        with open(os.path.join(path, file), 'wb') as f:
           f.write(response.read())
   
   except:
 
-    PSG.popup_ok("Assets mancanti o nome file invalidi", "Controllare la directory assets o recarsi a https://github.com/Piombacciaio/calcolo-codice-fiscale per recuperare i file originali.", title="Errore", button_color="red")
+    PSG.popup_ok("Missing assets or invalid filenames", "Check assets directory or go to https://github.com/Piombacciaio/calcolo-code-fiscale to recover original files.", title="Error", button_color="red")
     quit(1)
 
-MESE_NASCITA = {
-  "GENNAIO": "A",
-  "FEBBRAIO": "B",
-  "MARZO": "C",
-  "APRILE": "D",
-  "MAGGIO": "E",
-  "GIUGNO": "H",
-  "LUGLIO": "L",
-  "AGOSTO": "M",
-  "SETTEMBRE": "P",
-  "OTTOBRE": "R",
-  "NOVEMBRE": "S",
-  "DICEMBRE": "T"}
-MESE_NUMERO = {
-  "GENNAIO": "01",
-  "FEBBRAIO": "02",
-  "MARZO": "03",
-  "APRILE": "04",
-  "MAGGIO": "05",
-  "GIUGNO": "06",
-  "LUGLIO": "07",
-  "AGOSTO": "08",
-  "SETTEMBRE": "09",
-  "OTTOBRE": "10",
-  "NOVEMBRE": "11",
-  "DICEMBRE": "12"}
-CONVERSIONE_CIN = {
+BIRTH_MONTH = {
+  "JANUARY": "A",
+  "FEBRUARY": "B",
+  "MARCH": "C",
+  "APRIL": "D",
+  "MAY": "E",
+  "JUNE": "H",
+  "JULY": "L",
+  "AUGUST": "M",
+  "SEPTEMBER": "P",
+  "OCTOBER": "R",
+  "NOVEMBER": "S",
+  "DECEMBER": "T"}
+MONTH_CONVERSION = {
+  "JANUARY": "01",
+  "FEBRUARY": "02",
+  "MARCH": "03",
+  "APRIL": "04",
+  "MAY": "05",
+  "JUNE": "06",
+  "JULY": "07",
+  "AUGUST": "08",
+  "SEPTEMBER": "09",
+  "OCTOBER": "10",
+  "NOVEMBER": "11",
+  "DECEMBER": "12"}
+CIN_CONVERSION = {
   0 : "A",
   1 : "B",
   2 : "C",
@@ -83,7 +80,7 @@ CONVERSIONE_CIN = {
   23 : "X",
   24 : "Y",
   25 : "Z"}
-CONVERSIONE_PARI = {
+EVEN_CONVERSION = {
   "0": 0,
   "1": 1,
   "2": 2,
@@ -119,9 +116,8 @@ CONVERSIONE_PARI = {
   "W": 22,
   "X": 23,
   "Y": 24,
-  "Z": 25
-}
-CONVERSIONE_DISPARI = {
+  "Z": 25}
+ODD_CONVERSION = {
   "0": 1,
   "1": 0,
   "2": 5,
@@ -157,9 +153,8 @@ CONVERSIONE_DISPARI = {
   "W": 22,
   "X": 25,
   "Y": 24,
-  "Z": 23
-}
-CONVERSIONE_OMOCODIA = {
+  "Z": 23}
+OMOCODE_CONVERSION = {
   "0" : "L",
   "1" : "M",
   "2" : "N",
@@ -170,35 +165,35 @@ CONVERSIONE_OMOCODIA = {
   "7" : "T",
   "8" : "U",
   "9" : "V"}
-VOCALI = "AEIOU"
-CONSONANTI = "BCDFGHJKLMNPQRSTVWXYZ"
-NUMERI = "0123456789"
-with open("assets/comuni.json", "r") as codici: 
-  CODICI = json.load(codici)
+VOWELS = "AEIOU"
+CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ"
+DIGITS = "0123456789"
+with open("assets/municipalities.json", "r") as codes: 
+  CODES = json.load(codes)
 
 
 
 #
-# Impostazione PySimpleGUI
+# PySimpleGUI settings
 #
-anno_corrente = dt.date.today().year
+current_year = dt.date.today().year
 PSG.theme("DarkBlack")
-vista_base = [
+default_view = [
   [PSG.Frame("",
       [
-        [PSG.Text("Nome     "), PSG.Input("", key="-INPUTNOME-")], 
-        [PSG.Text("Cognome"), PSG.Input("", key="-INPUTCOGNOME-")],
-        [PSG.Text("Genere   "), PSG.OptionMenu(values=("M", "F"), default_value="", key="-INPUTGENERE-")],
-        [PSG.Text("Data di Nascita"), 
-         PSG.OptionMenu(values=(["%02d" % x for x in range(1, 31)]), default_value="GG", key="-INPUTGIORNO-"), 
-         PSG.OptionMenu(values=("Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Lugio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"), default_value="Mese", key="-INPUTMESE-"), 
-         PSG.OptionMenu(values=([year for year in range(anno_corrente - 120, anno_corrente + 1)][::-1]), default_value="Anno", key="-INPUTANNO-"),],
-        [PSG.Text("Comune di nascita"), PSG.Input("", key="-INPUTCOMUNE-")],
-        [PSG.Button("Calcola", key="-CALCOLA-", bind_return_key=True)],
-        [PSG.Text("Codice"), PSG.Input("", size = (55, 5), disabled=True, key="-OUTPUT-", text_color="black")],
-        [PSG.Button("Visualizza carta", key="-CREAVISTA-", disabled=True), 
-        PSG.Button("Salva carta", key="-SALVAVISTA-", disabled=True),
-        PSG.Button("Visualizza Casi Omocodia", key="-OMOCODIA-", disabled=True)]
+        [PSG.Text("Name     "), PSG.Input("", key="-NAMEINPUT-")], 
+        [PSG.Text("Surname"), PSG.Input("", key="-SURNAMEINPUT-")],
+        [PSG.Text("Gender   "), PSG.OptionMenu(values=("M", "F"), default_value="", key="-GENDERINPUT-")],
+        [PSG.Text("Birth date"), 
+         PSG.OptionMenu(values=(["%02d" % x for x in range(1, 31)]), default_value="GG", key="-DAYINPUT-"), 
+         PSG.OptionMenu(values=("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), default_value="Month", key="-MONTHINPUT-"), 
+         PSG.OptionMenu(values=([year for year in range(current_year - 120, current_year + 1)][::-1]), default_value="Year", key="-INPUTANNO-"),],
+        [PSG.Text("Birth municipality"), PSG.Input("", key="-MUNICIPALITYINPUT-")],
+        [PSG.Button("Calculate", key="-CALCULATE-", bind_return_key=True)],
+        [PSG.Text("Tax Code"), PSG.Input("", size = (55, 5), disabled=True, key="-OUTPUT-", text_color="black")],
+        [PSG.Button("Show card", key="-CREATECARD-", disabled=True), 
+        PSG.Button("Save card", key="-SAVECARD-", disabled=True),
+        PSG.Button("View omocodes", key="-OMOCODES-", disabled=True)]
       ]
     )
   ]
@@ -209,179 +204,177 @@ vista_base = [
 #
 # Code
 #
+def calculate_name_chars(name:str):
+  if len(name) <= 3:
+    code = ""
 
+    for character in name:
+      if character in CONSONANTS:
+        code += character
 
-def calcola_caratteri_nome(nome:str):
-  if len(nome) <= 3:
-    codice = ""
+    for character in name:
+      if character in VOWELS:
+        code += character
 
-    for carattere in nome:
-      if carattere in CONSONANTI:
-        codice += carattere
-
-    for carattere in nome:
-      if carattere in VOCALI:
-        codice += carattere
-
-    return codice + ("X" * (3 - len(nome)))
+    return code + ("X" * (3 - len(name)))
   
   else:
-    consonanti = ""
-    codice = ""
+    consonants = ""
+    code = ""
 
-    for carattere in nome:
-      if carattere in CONSONANTI and len(codice) < 3:
-        consonanti += carattere
+    for character in name:
+      if character in CONSONANTS and len(code) < 3:
+        consonants += character
 
-    if len(consonanti) > 3:
-      codice = consonanti[0] + consonanti[2] + consonanti[3]
+    if len(consonants) > 3:
+      code = consonants[0] + consonants[2] + consonants[3]
     else:
-      for carattere in consonanti:
-        if len(codice) < 3:
-          codice += carattere
+      for character in consonants:
+        if len(code) < 3:
+          code += character
 
-    for carattere in nome:
-      if carattere in VOCALI and len(codice) < 3:
-        codice += carattere
+    for character in name:
+      if character in VOWELS and len(code) < 3:
+        code += character
 
-    return codice
+    return code
 
-def calcola_caratteri_cognome(nome:str):
-  if len(nome) <= 3:
-    codice = ""
+def calculate_surname_chars(name:str):
+  if len(name) <= 3:
+    code = ""
 
-    for carattere in nome:
-      if carattere in CONSONANTI:
-        codice += carattere
+    for character in name:
+      if character in CONSONANTS:
+        code += character
 
-    for carattere in nome:
-      if carattere in VOCALI:
-        codice += carattere
+    for character in name:
+      if character in VOWELS:
+        code += character
 
-    return codice + ("X" * (3 - len(nome)))
+    return code + ("X" * (3 - len(name)))
   
   else:
-    codice = ""
+    code = ""
 
-    for carattere in nome:
-      if carattere in CONSONANTI and len(codice) < 3:
-        codice += carattere
+    for character in name:
+      if character in CONSONANTS and len(code) < 3:
+        code += character
 
-    for carattere in nome:
-      if carattere in VOCALI and len(codice) < 3:
-        codice += carattere
+    for character in name:
+      if character in VOWELS and len(code) < 3:
+        code += character
 
-    return codice
+    return code
 
-def calcola_carattere_cin(codice_parziale:str):
-  posizioni_pari = codice_parziale[1::2]
-  posizioni_dispari = codice_parziale[0::2]
+def calculate_cin_char(partial_code:str):
+  even_positions = partial_code[1::2]
+  odd_positions = partial_code[0::2]
   
-  somma_pari = 0
-  for carattere in posizioni_pari:
-    valore = CONVERSIONE_PARI[carattere]
-    somma_pari += valore
+  even_sum = 0
+  for character in even_positions:
+    value = EVEN_CONVERSION[character]
+    even_sum += value
 
-  somma_dispari = 0
-  for carattere in posizioni_dispari:
-    valore = CONVERSIONE_DISPARI[carattere]
-    somma_dispari += valore
+  odd_sum = 0
+  for character in odd_positions:
+    value = ODD_CONVERSION[character]
+    odd_sum += value
 
-  resto = (somma_pari + somma_dispari) % 26
-  codice_cin = CONVERSIONE_CIN[resto]
-  return codice_cin
+  remainder = (even_sum + odd_sum) % 26
+  cin_code = CIN_CONVERSION[remainder]
+  return cin_code
 
-def crea_fronte_carta(codice_fiscale:str, cognome:str, nome:str, genere:str, luogo_nascita:str, giorno_nascita:str, mese_nascita:str, anno_nascita:str, salva:bool=False):
-  immagine_base = Image.open("assets/base.jpg")
+def calculate_card_layout(tax_code:str, surname:str, name:str, gender:str, birth_place:str, birth_day:str, birth_month:str, birth_year:str, save:bool=False):
+  template = Image.open("assets/base.jpg")
 
-  immagine = ImageDraw.Draw(immagine_base)
+  image = ImageDraw.Draw(template)
   font =ImageFont.truetype("assets/VerdanaBold.ttf", 30)
 
-  immagine.text((112,130), codice_fiscale, fill=(0,0,0), font=font)
-  immagine.text((130,190), cognome[:40], fill=(0,0,0), font=font)
-  immagine.text((90,230), nome[:35], fill=(0,0,0), font=font)
-  immagine.text((680,255), genere, fill=(0,0,0), font=font)
-  immagine.text((130,280), luogo_nascita.upper(), fill=(0,0,0), font=font)
-  immagine.text((130,330), CODICI[luogo_nascita]["codice_provinciale"], fill=(0,0,0), font=font)
-  immagine.text((130,370), f"{giorno_nascita}/{MESE_NUMERO[mese_nascita]}/{anno_nascita}", fill=(0,0,0), font=font)
+  image.text((112,130), tax_code, fill=(0,0,0), font=font)
+  image.text((130,190), surname[:40], fill=(0,0,0), font=font)
+  image.text((90,230), name[:35], fill=(0,0,0), font=font)
+  image.text((680,255), gender, fill=(0,0,0), font=font)
+  image.text((130,280), birth_place.upper(), fill=(0,0,0), font=font)
+  image.text((130,330), CODES[birth_place]["codice_provinciale"], fill=(0,0,0), font=font)
+  image.text((130,370), f"{birth_day}/{MONTH_CONVERSION[birth_month]}/{birth_year}", fill=(0,0,0), font=font)
 
-  if not salva: 
-    immagine_base.show()
-  if salva:
-    immagine_base.save(fp=f"output/CNS_{codice_fiscale}.png")
-    PSG.popup_ok(f"Image saved to output folder as CNS_{codice_fiscale}.png", title="Image Saved")
+  if not save: 
+    template.show()
+  if save:
+    template.save(fp=f"output/CNS_{tax_code}.png")
+    PSG.popup_ok(f"Image saved to output folder as CNS_{tax_code}.png", title="Image Saved")
 
-def calcola_omocodia(codice_parziale:str):
-  codice_inverso = codice_parziale[::-1]
-  codici_completi = ""
+def calculate_omocodes(partial_code:str):
+  inverse_code = partial_code[::-1]
+  complete_codes = ""
 
-  for char in codice_inverso:
-    if char in NUMERI:
-      codice_inverso = codice_inverso.replace(char, CONVERSIONE_OMOCODIA[char], 1)
-      codici_completi += (codice_inverso[::-1] + calcola_carattere_cin(codice_inverso[::-1]) + "\n")
-  PSG.popup_ok(codici_completi, title="Lista Omocodia")  
+  for char in inverse_code:
+    if char in DIGITS:
+      inverse_code = inverse_code.replace(char, OMOCODE_CONVERSION[char], 1)
+      complete_codes += (inverse_code[::-1] + calculate_cin_char(inverse_code[::-1]) + "\n")
+  PSG.popup_ok(complete_codes, title="Omocodes list")  
 
 def main():
 
-  finestra = PSG.Window("Calcolatrice Codice Fiscale", vista_base)
+  window = PSG.Window("Tax code calculator", default_view)
 
   while True:
 
     try:
 
-      eventi, valori = finestra.read()
+      events, values = window.read()
 
-      if eventi == PSG.WIN_CLOSED: break
+      if events == PSG.WIN_CLOSED: break
 
-      if eventi == "-CALCOLA-":
+      if events == "-CALCULATE-":
 
-        _cognome:str = valori["-INPUTCOGNOME-"].upper()
-        nome:str = valori["-INPUTNOME-"].upper()
+        _surname:str = values["-SURNAMEINPUT-"].upper()
+        name:str = values["-NAMEINPUT-"].upper()
         
-        anno_nascita = str(valori["-INPUTANNO-"])
-        codice_anno = anno_nascita[2:]
+        birth_year = str(values["-INPUTANNO-"])
+        year_code = birth_year[2:]
         
-        mese_nascita = valori["-INPUTMESE-"].upper()
-        codice_mese = MESE_NASCITA[mese_nascita]
+        birth_month = values["-MONTHINPUT-"].upper()
+        month_code = BIRTH_MONTH[birth_month]
         
-        giorno_nascita = valori["-INPUTGIORNO-"]
+        birth_day = values["-DAYINPUT-"]
         
-        genere = valori["-INPUTGENERE-"]
-        if genere == "F":
-          codice_giorno = int(giorno_nascita)
-          codice_giorno += 40
+        gender = values["-GENDERINPUT-"]
+        if gender == "F":
+          day_code = int(birth_day)
+          day_code += 40
           try:
-            cognome, _ = _cognome.split(" ")
+            surname, _ = _surname.split(" ")
           except:
-            cognome = _cognome
+            surname = _surname
         else:
-          codice_giorno = giorno_nascita
-          cognome = _cognome.replace(" ", "")
+          day_code = birth_day
+          surname = _surname.replace(" ", "")
 
-        luogo_nascita = valori["-INPUTCOMUNE-"].lower()
-        codice_luogo = CODICI[luogo_nascita]["codice_catastale"]
+        birth_place = values["-MUNICIPALITYINPUT-"].lower()
+        municipality_code = CODES[birth_place]["codice_catastale"]
         
-        caratteri_cognome = calcola_caratteri_cognome(cognome.replace("-", ""))
-        caratteri_nome = calcola_caratteri_nome(nome.replace(" ", "").replace("-", ""))
+        surname_chars = calculate_surname_chars(surname.replace("-", ""))
+        name_chars = calculate_name_chars(name.replace(" ", "").replace("-", ""))
         
-        codice_parziale = caratteri_cognome + caratteri_nome + codice_anno + codice_mese + str(codice_giorno) + codice_luogo
-        cin = calcola_carattere_cin(codice_parziale)
+        partial_code = surname_chars + name_chars + year_code + month_code + str(day_code) + municipality_code
+        cin = calculate_cin_char(partial_code)
 
-        codice_completo = codice_parziale + cin
+        complete_code = partial_code + cin
 
-        finestra["-OUTPUT-"].update(codice_completo)
-        finestra["-CREAVISTA-"].update(disabled=False)
-        finestra["-SALVAVISTA-"].update(disabled=False)
-        finestra["-OMOCODIA-"].update(disabled=False)
+        window["-OUTPUT-"].update(complete_code)
+        window["-CREATECARD-"].update(disabled=False)
+        window["-SAVECARD-"].update(disabled=False)
+        window["-OMOCODES-"].update(disabled=False)
 
-      if eventi == "-CREAVISTA-":
-        crea_fronte_carta(codice_completo, _cognome, nome, genere, luogo_nascita, giorno_nascita, mese_nascita, anno_nascita)
+      if events == "-CREATECARD-":
+        calculate_card_layout(complete_code, _surname, name, gender, birth_place, birth_day, birth_month, birth_year)
 
-      if eventi == "-SALVAVISTA-":
-        crea_fronte_carta(codice_completo, _cognome, nome, genere, luogo_nascita, giorno_nascita, mese_nascita, anno_nascita, salva=True)
+      if events == "-SAVECARD-":
+        calculate_card_layout(complete_code, _surname, name, gender, birth_place, birth_day, birth_month, birth_year, save=True)
       
-      if eventi == "-OMOCODIA-":
-        calcola_omocodia(codice_parziale)
+      if events == "-OMOCODES-":
+        calculate_omocodes(partial_code)
       
     except: pass
 
