@@ -17,11 +17,11 @@ Graphic interface to calculate and show the italian tax code and national card o
 
 ## Calculation rules
 
-The italian tax code is a 16-chars long alphanumerical string composed by 3 chars from the surname, 3 chars from the name, the bith date, a code to identify the municipality of birth and a control character (CIN).
+The italian tax code is a 16-chars long alphanumerical string composed by 3 chars from the surname, 3 chars from the name, the birth date, a code to identify the municipality of birth and a control character (CIN).
 
 ### example
 
-Mario Rossi is born in Milan on the 4th of july 1989 so his code would be: `RSSMRA89L04F205S`
+Mario Rossi is born in Milan on the 4th of July 1989 so his code would be: `RSSMRA89L04F205S`
 
 |Surname|Name|Year|Month|Day|Municipality|CIN|
 |---|---|---|---|---|---|---|
@@ -74,7 +74,7 @@ The control character is calculated through an algorithm using the first 15 char
 
 - Divide characters in even and odd positions
 - Convert every character to a value using the tables below
-- Add every value and divide by 26 and get the remainder
+- Sum every value and divide by 26 and get the remainder
 - Convert the remainder to a character and add it to the end of the string
 
 #### Even positions
