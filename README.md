@@ -139,4 +139,4 @@ If two or more people are born in the same day in the same place and have the sa
 ## Requirements
 
 - [Python 3.9.x or newer](https://www.python.org/downloads/)
-- pip requirements (`pip install -r requirements.txt`)
+- pip requirements (`pip install - U -r requirements.txt`)
