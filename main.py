@@ -29,7 +29,7 @@ if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/municipal
             f.write(response.read())
             
   except:
-    PSG.popup_ok("Missing assets or invalid filenames", "Check assets directory or go to https://github.com/Piombacciaio/calcolo-code-fiscale to recover original files.", title="Error", button_color="red")
+    PSG.popup_ok("Missing assets or invalid filenames", "Check assets directory or go to https://github.com/Piombacciaio/tax-code-calculator to recover original files.", title="Error", button_color="red")
     quit(1)
 
 BIRTH_MONTH = {
