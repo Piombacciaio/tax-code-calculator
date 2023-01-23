@@ -7,23 +7,28 @@ from PIL import Image, ImageDraw, ImageFont
 if sys.argv[0].endswith(".py"):
   ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 6)
   sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=0, cols=0))
+
 if not os.path.exists("output"):
   os.mkdir("output")
+
+if not os.path.exists("assets"):
+  os.mkdir("assets")
+
 if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/municipalities.json") or not os.path.exists("assets/VerdanaBold.ttf"):
-  
+
   try:
-  
-    github = 'https://raw.githubusercontent.com/Piombacciaio/calcolo-code-fiscale/main/assets/'
+
+    github = 'https://raw.githubusercontent.com/Piombacciaio/tax-code-calculator/main/assets/'
     files = ["base.jpg","municipalities.json", "VerdanaBold.ttf"]
     path = "assets"
-    os.mkdir(path)
-    for file in files:
-      with request.urlopen(github + file) as response:
-        with open(os.path.join(path, file), 'wb') as f:
-          f.write(response.read())
-  
-  except:
 
+    for file in files:
+      if not os.path.exists(f"assets/{file}"):
+        with request.urlopen(github + file) as response:
+          with open(os.path.join(path, file), 'wb') as f:
+            f.write(response.read())
+            
+  except:
     PSG.popup_ok("Missing assets or invalid filenames", "Check assets directory or go to https://github.com/Piombacciaio/calcolo-code-fiscale to recover original files.", title="Error", button_color="red")
     quit(1)
 
