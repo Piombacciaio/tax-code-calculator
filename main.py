@@ -1,4 +1,4 @@
-import ctypes, datetime as dt, eel, json, markdown, os, PySimpleGUI as PSG, socket, sys
+import ctypes, datetime as dt, eel, json, os, PySimpleGUI as PSG, socket, sys
 from eel import chrome
 from PIL import Image, ImageDraw, ImageFont
 from urllib import request
