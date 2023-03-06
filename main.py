@@ -14,16 +14,16 @@ if not os.path.exists("output"):
 if not os.path.exists("assets"):
   os.mkdir("assets")
 
-if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/municipalities.json") or not os.path.exists("assets/VerdanaBold.ttf"):
+if not os.path.exists("assets/base.jpg") or not os.path.exists("assets/municipalities.json") or not os.path.exists("assets/VerdanaBold.ttf") or not os.path.exists("assets/favicon.ico") or not os.path.exists("assets/README.html"):
 
   try:
 
     github = 'https://raw.githubusercontent.com/Piombacciaio/tax-code-calculator/main/assets/'
-    files = ["base.jpg","municipalities.json", "VerdanaBold.ttf"]
+    files = ["base.jpg","municipalities.json", "VerdanaBold.ttf", "favicon.ico", "README.html"]
     path = "assets"
 
     for file in files:
-      if not os.path.exists(f"assets/{file}"):
+      if not os.path.exists(f"{path}/{file}"):
         with request.urlopen(github + file) as response:
           with open(os.path.join(path, file), 'wb') as f:
             f.write(response.read())
