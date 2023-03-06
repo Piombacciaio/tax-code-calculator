@@ -1,7 +1,7 @@
-import ctypes, datetime as dt, json, os, PySimpleGUI as PSG, sys
-from urllib import request
+import ctypes, datetime as dt, eel, json, markdown, os, PySimpleGUI as PSG, socket, sys
+from eel import chrome
 from PIL import Image, ImageDraw, ImageFont
-
+from urllib import request
 
 
 if sys.argv[0].endswith(".py"):
@@ -198,7 +198,9 @@ default_view = [
         [PSG.Text("Tax Code"), PSG.Input("", size = (55, 5), disabled=True, key="-OUTPUT-", text_color="black")],
         [PSG.Button("Show card", key="-CREATECARD-", disabled=True), 
         PSG.Button("Save card", key="-SAVECARD-", disabled=True),
-        PSG.Button("View omocodes", key="-OMOCODES-", disabled=True)]
+        PSG.Button("View omocodes", key="-OMOCODES-", disabled=True),
+        PSG.Push(),
+        PSG.Button("README", key="-README-")]
       ]
     )
   ]
@@ -319,8 +321,36 @@ def calculate_omocodes(partial_code:str):
       complete_codes += (inverse_code[::-1] + calculate_cin_char(inverse_code[::-1]) + "\n")
   PSG.popup_ok(complete_codes, title="Omocodes list")  
 
-def main():
+def can_use_chrome():
+    """ Identify if Chrome is available for Eel to use """
+    chrome_instance_path = chrome.find_path()
+    return chrome_instance_path is not None and os.path.exists(chrome_instance_path)
 
+def get_port():
+    """ Get an available port by starting a new server, stopping and and returning the port """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(('localhost', 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    return port
+
+def readme():
+    try:
+        
+        chrome_available = can_use_chrome()
+        if chrome_available:
+            eel.start("README.html", size=(650, 672), port=0, block=False)
+            eel.sleep(2)
+        else:
+            port = get_port()
+            print('Server starting at http://localhost:' + str(port) + '/index.html')
+            eel.start("README.html", size=(650, 672), host='localhost', port=port, mode=None, close_callback=lambda x, y: None, block=False)
+            eel.sleep(2)
+    except (SystemExit, KeyboardInterrupt):
+        pass  
+
+def main():
+  eel.init(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assets'))
   window = PSG.Window("Tax code calculator", default_view)
 
   while True:
@@ -380,6 +410,9 @@ def main():
       
       if events == "-OMOCODES-":
         calculate_omocodes(partial_code)
+      
+      if events == "-README-":
+        readme()
       
     except: pass
 

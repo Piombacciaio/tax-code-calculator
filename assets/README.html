@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>README</title>
+        <style>
+            table, td {border: 1px solid black;border-collapse: collapse;}
+        </style>
+    </head>
+    <body>
+        <h1>Tax code calculator</h1>
+        <p>Graphic interface to calculate and show the italian tax code and national card of services (CNS)</p>
+        <h2>Index</h2>
+        <ol>
+        <li><a href="#calculation-rules">Calculation rules</a></li>
+        <li><a href="#surname-chars">Surname chars</a></li>
+        <li><a href="#name-chars">Name chars</a></li>
+        <li><a href="#year-code">Year code</a></li>
+        <li><a href="#month-code">Month code</a></li>
+        <li><a href="#day-code">Day code</a></li>
+        <li><a href="#municipality-code">Municipality code</a></li>
+        <li><a href="#cin-code">CIN code</a></li>
+        <li><a href="#omocoding-issues">Omocoding</a></li>
+        </ol>
+        <h2 id="calculation-rules">Calculation rules</h2>
+        <p>The italian tax code is a 16-chars long alphanumerical string composed by 3 chars from the surname, 3 chars from the name, the birth date, a code to identify the municipality of birth and a control character (CIN).</p>
+        <h4>example</h4>
+        <p>Mario Rossi is born in Milan on the 4th of July 1989 so his code would be: <code>RSSMRA89L04F205S</code></p>
+        <table>
+            <tr>
+                <th>Surname</th>
+                <th>Name</th>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Day</th>
+                <th>Municipality</th>
+                <th>CIN</th>
+            </tr>
+            <tr>
+                <td>RSS</td>
+                <td>MRA</td>
+                <td>89</td>
+                <td>L</td>
+                <td>04</td>
+                <td>F205</td>
+                <td>S</td>
+            </tr>
+        </table>
+        <p>So, how is it done?</p>
+        <h3 id="surname-chars">Surname chars</h3>
+        <p>Surname chars are 3 characters taken, giving priority to consonants, from left to right.
+        If the consonants are not enough (ex. if surname is Pisu), the vowels are taken from left to right.
+        If, using both vowels and consonants, the limit of 3 chars is not reached <code>X</code>s are added to the end of the string.</p>
+        <p>To calculate surname characters for womens, is used only the maiden name.</p>
+        <h3 id="name-chars">Name chars</h3>
+        <p>Name chars are 3 characters taken, giving priority to consonants, from left to right.
+        If the consonants are more than 3, in the code are used the first, third and fourth consonants.
+        Else, if the consonants are less than 3, the vowels are taken from left to right.
+        If, using both vowels and consonants, the limit of 3 chars is not reached <code>X</code>s are added to the end of the string.</p>
+        <h3 id="year-code">Year code</h3>
+        <p>The year code is composed by the last two digits of the birth year.</p>
+        <h3 id="month-code">Month code</h3>
+        <p>The month code is calculated by converting the birth month to a single letter.
+            <table>
+                <tr>
+                    <th>Month</th>
+                    <th>Letter</th>
+                    <th>Month</th>
+                    <th>Letter</th>
+                </tr>
+                <tr>
+                    <td>JANUARY</td>
+                    <td>A</td>
+                    <td>JULY</td>
+                    <td>L</td>
+                </tr>
+                <tr>
+                    <td>FEBRUARY</td>
+                    <td>B</td>
+                    <td>AUGUST</td>
+                    <td>M</td>
+                </tr>
+                <tr>
+                    <td>MARCH</td>
+                    <td>C</td>
+                    <td>SEPTEMBER</td>
+                    <td>P</td>
+                </tr>
+                <tr>
+                    <td>APRIL</td>
+                    <td>D</td>
+                    <td>OCTOBER</td>
+                    <td>R</td>
+                </tr>
+                <tr>
+                    <td>MAY</td>
+                    <td>E</td>
+                    <td>NOVEMBER</td>
+                    <td>S</td>
+                </tr>
+                <tr>
+                    <td>JUNE</td>
+                    <td>H</td>
+                    <td>DECEMBER</td>
+                    <td>T</td>
+                </tr>
+            </table></p>
+        <h3 id="day-code">Day code</h3>
+        <p>The day code is the day of birth of the person. If the person is a woman, the code is the sum of  the day + 40.</p>
+        <h3 id="municipality-code">Municipality code</h3>
+        <p>The municipality code is the code that identifies the place of birth.</p>
+        <h3 id="cin-code">CIN code</h3>
+        <p>The control character is calculated through an algorithm using the first 15 characters partial code.</p>
+        <ul>
+        <li>Divide characters in even and odd positions</li>
+        <li>Convert every character to a value using the tables below</li>
+        <li>Sum every value and divide by 26 and get the remainder</li>
+        <li>Convert the remainder to a character and add it to the end of the string</li>
+        </ul>
+        <h4>Even positions</h4>
+        <table>
+            <tr>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>9</td>
+                <td>9</td>
+                <td>I</td>
+                <td>8</td>
+                <td>R</td>
+                <td>17</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>A</td>
+                <td>0</td>
+                <td>J</td>
+                <td>9</td>
+                <td>S</td>
+                <td>18</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>2</td>
+                <td>B</td>
+                <td>1</td>
+                <td>K</td>
+                <td>10</td>
+                <td>T</td>
+                <td>19</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>3</td>
+                <td>C</td>
+                <td>2</td>
+                <td>L</td>
+                <td>11</td>
+                <td>U</td>
+                <td>20</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>4</td>
+                <td>D</td>
+                <td>3</td>
+                <td>M</td>
+                <td>12</td>
+                <td>V</td>
+                <td>21</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>5</td>
+                <td>E</td>
+                <td>4</td>
+                <td>N</td>
+                <td>13</td>
+                <td>W</td>
+                <td>22</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>6</td>
+                <td>F</td>
+                <td>5</td>
+                <td>O</td>
+                <td>14</td>
+                <td>X</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>7</td>
+                <td>G</td>
+                <td>6</td>
+                <td>P</td>
+                <td>15</td>
+                <td>Y</td>
+                <td>24</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>8</td>
+                <td>H</td>
+                <td>7</td>
+                <td>Q</td>
+                <td>16</td>
+                <td>Z</td>
+                <td>25</td>
+            </tr>
+        </table>
+        <h4>Odd positions</h4>
+        <table>
+            <tr>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>1</td>
+                <td>9</td>
+                <td>21</td>
+                <td>I</td>
+                <td>19</td>
+                <td>R</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>A</td>
+                <td>1</td>
+                <td>J</td>
+                <td>21</td>
+                <td>S</td>
+                <td>12</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>5</td>
+                <td>B</td>
+                <td>0</td>
+                <td>K</td>
+                <td>2</td>
+                <td>T</td>
+                <td>14</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>7</td>
+                <td>C</td>
+                <td>5</td>
+                <td>L</td>
+                <td>4</td>
+                <td>U</td>
+                <td>16</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>9</td>
+                <td>D</td>
+                <td>7</td>
+                <td>M</td>
+                <td>18</td>
+                <td>V</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>13</td>
+                <td>E</td>
+                <td>9</td>
+                <td>N</td>
+                <td>20</td>
+                <td>W</td>
+                <td>22</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>15</td>
+                <td>F</td>
+                <td>13</td>
+                <td>O</td>
+                <td>11</td>
+                <td>X</td>
+                <td>25</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>17</td>
+                <td>G</td>
+                <td>15</td>
+                <td>P</td>
+                <td>3</td>
+                <td>Y</td>
+                <td>24</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>19</td>
+                <td>H</td>
+                <td>17</td>
+                <td>Q</td>
+                <td>6</td>
+                <td>Z</td>
+                <td>23</td>
+            </tr>
+        </table>
+        <h4>Remainder conversion</h4>
+        <table>
+            <tr>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+                <th>Character</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>A</td>
+                <td>9</td>
+                <td>J</td>
+                <td>18</td>
+                <td>S</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>B</td>
+                <td>10</td>
+                <td>K</td>
+                <td>19</td>
+                <td>T</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>C</td>
+                <td>11</td>
+                <td>L</td>
+                <td>20</td>
+                <td>U</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>D</td>
+                <td>12</td>
+                <td>M</td>
+                <td>21</td>
+                <td>V</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>E</td>
+                <td>13</td>
+                <td>N</td>
+                <td>22</td>
+                <td>W</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>F</td>
+                <td>14</td>
+                <td>O</td>
+                <td>23</td>
+                <td>X</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>G</td>
+                <td>15</td>
+                <td>P</td>
+                <td>24</td>
+                <td>Y</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>H</td>
+                <td>16</td>
+                <td>Q</td>
+                <td>25</td>
+                <td>Z</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>I</td>
+                <td>17</td>
+                <td>R</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <h3 id="omocoding-issues">Omocoding issues</h3>
+        <p>If two or more people are born in the same day in the same place and have the same name, their tax code would be the same. To avoid code duplication, starting from the right every numerical character is converted to a letter using the table. After this conversion a new CIN code is calculated.</p>
+        <table>
+            <tr>
+                <th>Value</th>
+                <th>Character</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>L</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>M</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>N</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>P</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Q</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>R</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>S</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>T</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>U</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>V</td>
+            </tr>
+        </table>
+    </body>
+</html>
