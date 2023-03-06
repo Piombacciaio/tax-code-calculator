@@ -351,7 +351,7 @@ def readme():
 
 def main():
   eel.init(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assets'))
-  window = PSG.Window("Tax code calculator", default_view)
+  window = PSG.Window("Tax code calculator", default_view, icon="assets/favicon.ico")
 
   while True:
 
