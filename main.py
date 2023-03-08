@@ -176,6 +176,14 @@ DIGITS = "0123456789"
 with open("assets/municipalities.json", "r") as codes: 
   CODES = json.load(codes)
 
+#Image settings
+TAX_CODE_POS = (318,155)
+SURNAME_POS = (318,210)
+NAME_POS = (318,250)
+BIRTH_PLACE_POS = (318,300)
+MUNICIPALITY_POS = (318,350)
+BIRTH_DAY_POS = (318,400)
+GENDER_POS = (655,175)
 
 
 #
@@ -291,19 +299,19 @@ def calculate_cin_char(partial_code:str):
   cin_code = CIN_CONVERSION[remainder]
   return cin_code
 
-def calculate_card_layout(tax_code:str, surname:str, name:str, gender:str, birth_place:str, birth_day:str, birth_month:str, birth_year:str, save:bool=False):
+def card_layout(tax_code:str, surname:str, name:str, gender:str, birth_place:str, birth_day:str, birth_month:str, birth_year:str, save:bool=False):
   template = Image.open("assets/base.jpg")
 
   image = ImageDraw.Draw(template)
-  font =ImageFont.truetype("assets/VerdanaBold.ttf", 30)
+  font = ImageFont.truetype("assets/VerdanaBold.ttf", 25)
 
-  image.text((112,130), tax_code, fill=(0,0,0), font=font)
-  image.text((130,190), surname[:40], fill=(0,0,0), font=font)
-  image.text((90,230), name[:35], fill=(0,0,0), font=font)
-  image.text((680,255), gender, fill=(0,0,0), font=font)
-  image.text((130,280), birth_place.upper(), fill=(0,0,0), font=font)
-  image.text((130,330), CODES[birth_place]["codice_provinciale"], fill=(0,0,0), font=font)
-  image.text((130,370), f"{birth_day}/{MONTH_CONVERSION[birth_month]}/{birth_year}", fill=(0,0,0), font=font)
+  image.text(TAX_CODE_POS, tax_code, fill=(0,0,0), font=font)
+  image.text(SURNAME_POS, surname[:40], fill=(0,0,0), font=font)
+  image.text(NAME_POS, name[:35], fill=(0,0,0), font=font)
+  image.text(GENDER_POS, gender, fill=(0,0,0), font=font)
+  image.text(BIRTH_PLACE_POS, birth_place.upper(), fill=(0,0,0), font=font)
+  image.text(MUNICIPALITY_POS, CODES[birth_place]["codice_provinciale"], fill=(0,0,0), font=font)
+  image.text(BIRTH_DAY_POS, f"{birth_day}/{MONTH_CONVERSION[birth_month]}/{birth_year}", fill=(0,0,0), font=font)
 
   if not save: 
     template.show()
@@ -403,10 +411,10 @@ def main():
         window["-OMOCODES-"].update(disabled=False)
 
       if events == "-CREATECARD-":
-        calculate_card_layout(complete_code, _surname, name, gender, birth_place, birth_day, birth_month, birth_year)
+        card_layout(complete_code, _surname, name, gender, birth_place, birth_day, birth_month, birth_year)
 
       if events == "-SAVECARD-":
-        calculate_card_layout(complete_code, _surname, name, gender, birth_place, birth_day, birth_month, birth_year, save=True)
+        card_layout(complete_code, _surname, name, gender, birth_place, birth_day, birth_month, birth_year, save=True)
       
       if events == "-OMOCODES-":
         calculate_omocodes(partial_code)
