@@ -5,6 +5,7 @@ from urllib import request
 
 
 if sys.argv[0].endswith(".py"):
+  ctypes.windll.kernel32.SetConsoleTitleW(f'Tax Code Calculator | made by piombacciaio')
   ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 6)
   sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=0, cols=0))
 
@@ -198,9 +199,9 @@ default_view = [
         [PSG.Text("Surname"), PSG.Input("", key="-SURNAMEINPUT-")],
         [PSG.Text("Gender   "), PSG.OptionMenu(values=("M", "F"), default_value="", key="-GENDERINPUT-")],
         [PSG.Text("Birth date"), 
-         PSG.OptionMenu(values=(["%02d" % x for x in range(1, 31)]), default_value="GG", key="-DAYINPUT-"), 
+         PSG.OptionMenu(values=(["%02d" % x for x in range(1, 31)]), default_value="Day", key="-DAYINPUT-"), 
          PSG.OptionMenu(values=("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), default_value="Month", key="-MONTHINPUT-"), 
-         PSG.OptionMenu(values=([year for year in range(current_year - 120, current_year + 1)][::-1]), default_value="Year", key="-INPUTANNO-"),],
+         PSG.OptionMenu(values=([year for year in range(current_year - 120, current_year + 1)][::-1]), default_value="Year", key="-YEARINPUT-"),],
         [PSG.Text("Birth municipality"), PSG.Input("", key="-MUNICIPALITYINPUT-")],
         [PSG.Button("Calculate", key="-CALCULATE-", bind_return_key=True)],
         [PSG.Text("Tax Code"), PSG.Input("", size = (55, 5), disabled=True, key="-OUTPUT-", text_color="black")],
@@ -374,7 +375,7 @@ def main():
         _surname:str = values["-SURNAMEINPUT-"].upper()
         name:str = values["-NAMEINPUT-"].upper()
         
-        birth_year = str(values["-INPUTANNO-"])
+        birth_year = str(values["-YEARINPUT-"])
         year_code = birth_year[2:]
         
         birth_month = values["-MONTHINPUT-"].upper()
