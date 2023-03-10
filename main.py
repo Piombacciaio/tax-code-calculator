@@ -199,7 +199,7 @@ default_view = [
         [PSG.Text("Surname"), PSG.Input("", key="-SURNAMEINPUT-")],
         [PSG.Text("Gender   "), PSG.OptionMenu(values=("M", "F"), default_value="", key="-GENDERINPUT-")],
         [PSG.Text("Birth date"), 
-         PSG.OptionMenu(values=(["%02d" % x for x in range(1, 31)]), default_value="Day", key="-DAYINPUT-"), 
+         PSG.OptionMenu(values=(["%02d" % x for x in range(1, 32)]), default_value="Day", key="-DAYINPUT-"), 
          PSG.OptionMenu(values=("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), default_value="Month", key="-MONTHINPUT-"), 
          PSG.OptionMenu(values=([year for year in range(current_year - 120, current_year + 1)][::-1]), default_value="Year", key="-YEARINPUT-"),],
         [PSG.Text("Birth municipality"), PSG.Input("", key="-MUNICIPALITYINPUT-")],
