@@ -21,11 +21,11 @@ The italian tax code is a 16-chars long alphanumerical string composed by 3 char
 
 ### example
 
-Mario Rossi is born in Milan on the 4th of July 1989 so his code would be: `RSSMRA89L04F205S`
+Mario Rossi is born in Milan on the 13th of December 1989 so his code would be: `RSSMRA89T13F205B`
 
 |Surname|Name|Year|Month|Day|Municipality|CIN|
 |---|---|---|---|---|---|---|
-|RSS|MRA|89|L|04|F205|S|
+|RSS|MRA|89|T|13|F205|B|
 
 So, how is it done?
 
@@ -35,7 +35,7 @@ Surname chars are 3 characters taken, giving priority to consonants, from left t
 If the consonants are not enough (ex. if surname is Pisu), the vowels are taken from left to right.
 If, using both vowels and consonants, the limit of 3 chars is not reached `X`s are added to the end of the string.
 
-To calculate surname characters for womens, is used only the maiden name.
+To calculate surname characters for womens, is used **only** the maiden name.
 
 ### Name chars
 
