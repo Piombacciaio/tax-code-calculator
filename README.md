@@ -51,6 +51,7 @@ The year code is composed by the last two digits of the birth year.
 ### Month code
 
 The month code is calculated by converting the birth month to a single letter.
+
 |Month|Letter|Month|Letter
 |---|---|---|---|
 JANUARY| A| JULY| L
