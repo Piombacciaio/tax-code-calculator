@@ -52,14 +52,14 @@ The year code is composed by the last two digits of the birth year.
 
 The month code is calculated by converting the birth month to a single letter.
 
-|Month|Letter|Month|Letter
+|Month|Letter|Month|Letter|
 |---|---|---|---|
-JANUARY| A| JULY| L
-FEBRUARY| B| AUGUST| M
-MARCH| C| SEPTEMBER| P
-APRIL| D| OCTOBER| R
-MAY| E| NOVEMBER| S
-JUNE| H| DECEMBER| T
+|JANUARY| A| JULY| L|
+|FEBRUARY| B| AUGUST| M|
+|MARCH| C| SEPTEMBER| P|
+|APRIL| D| OCTOBER| R|
+|MAY| E| NOVEMBER| S|
+|JUNE| H| DECEMBER| T|
 
 ### Day code
 
@@ -80,7 +80,7 @@ The control character is calculated through an algorithm using the first 15 char
 
 #### Even positions
 
-|Character| Value|Character|Value|Character|Value|Character|Value
+|Character| Value|Character|Value|Character|Value|Character|Value|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |0| 0| 9| 9| I| 8|  R| 17|
 |1| 1| A| 0| J| 9|  S| 18|
@@ -94,31 +94,31 @@ The control character is calculated through an algorithm using the first 15 char
 
 #### Odd positions
 
-|Character| Value|Character|Value|Character|Value|Character|Value
+|Character| Value|Character|Value|Character|Value|Character|Value|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-0| 1|  9| 21| I| 19|R| 8
-1| 0|  A| 1|  J| 21|S| 12
-2| 5|  B| 0|  K| 2| T| 14
-3| 7|  C| 5|  L| 4| U| 16
-4| 9|  D| 7|  M| 18|V| 10
-5| 13| E| 9|  N| 20|W| 22
-6| 15| F| 13| O| 11|X| 25
-7| 17| G| 15| P| 3| Y| 24
-8| 19| H| 17| Q| 6| Z| 23
+|0| 1|  9| 21| I| 19|R| 8|
+|1| 0|  A| 1|  J| 21|S| 12|
+|2| 5|  B| 0|  K| 2| T| 14|
+|3| 7|  C| 5|  L| 4| U| 16|
+|4| 9|  D| 7|  M| 18|V| 10|
+|5| 13| E| 9|  N| 20|W| 22|
+|6| 15| F| 13| O| 11|X| 25|
+|7| 17| G| 15| P| 3| Y| 24|
+|8| 19| H| 17| Q| 6| Z| 23|
 
 #### Remainder conversion
 
 |Character| Value|Character|Value|Character|Value|
 |:---:|:---:|:---:|:---:|:---:|:---:|
-|0| A| 9| J|  18| S
-|1| B| 10| K| 19| T
-|2| C| 11| L| 20| U
-|3| D| 12| M| 21| V
-|4| E| 13| N| 22| W
-|5| F| 14| O| 23| X
-|6| G| 15| P| 24| Y
-|7| H| 16| Q| 25| Z
-|8| I| 17| R|
+|0| A| 9| J|  18| S|
+|1| B| 10| K| 19| T|
+|2| C| 11| L| 20| U|
+|3| D| 12| M| 21| V|
+|4| E| 13| N| 22| W|
+|5| F| 14| O| 23| X|
+|6| G| 15| P| 24| Y|
+|7| H| 16| Q| 25| Z|
+|8| I| 17| R| | |
 
 ### Omocoding issues
 
